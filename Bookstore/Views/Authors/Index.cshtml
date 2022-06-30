@@ -1,0 +1,86 @@
+﻿@model Bookstore.ViewModels.AuthorsFilterVM
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1 align="center">Authors</h1>
+
+@if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+{
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+}
+<form asp-controller="Authors" asp-action="Index" method="get">
+    <p>
+        Search: <input type="text" asp-for="SearchString" />
+        <input type="submit" value="Filter" />
+    </p>
+</form>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.authors[0].FirstName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.authors[0].LastName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.authors[0].Nationality)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.authors[0].BirthDate)
+            </th>
+            <th>
+                Books
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.authors) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Nationality)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.BirthDate)
+            </td>
+            <td>
+                    @if (item.Books != null)
+                    {
+                            <a asp-controller="Books" asp-action="AuthorBooks" asp-route-id="@item.Id">
+                                View Books <br>
+                        </a>
+                    }
+                
+                else{
+                    <span></span>
+                }
+            </td>
+            <td>
+                    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                    {
+                        <span>|</span>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                    }
+                    |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> 
+                    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                    {
+                        <span>|</span>
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    }
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

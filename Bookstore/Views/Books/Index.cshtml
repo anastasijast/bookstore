@@ -1,0 +1,49 @@
+﻿@using Bookstore.Areas.Identity.Data
+@using Microsoft.AspNetCore.Identity
+@model Bookstore.ViewModels.BooksFilterVM
+@inject UserManager<BookstoreUser> UserManager
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1 align="center">Books</h1>
+@if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+    {
+<p>
+    <a asp-action="Create">Create a Book</a>
+</p>
+    }
+<form asp-controller="Books" asp-action="Index" method="get">
+<p>
+<select asp-for="BookGenre" asp-items="Model.Genres">
+<option value="">Select Genre</option>
+</select>
+<select asp-for="BookAuthor" asp-items="Model.Authors">
+<option value="">All</option>
+</select>
+Title: <input type="text" asp-for="SearchString" />
+<input type="submit" value="Filter" />
+</p>
+</form>
+<div class="container">
+    <div class="row">
+@foreach(var item in Model.books){
+        <div class="col-4 d-flex justify-content-center my-5">
+ <div class="card d-flex flex-wrap text-center text-white bg-dark mb-3" style="width: 18rem;">
+  <img class="card-img-top" src="~/pictures/@item.Picture" alt="Card image cap">
+  <div class="card-body">
+    <h5 class="card-title">@Html.DisplayFor(modelItem => item.Title)</h5>
+    <span class="card-text">@Html.DisplayFor(modelItem => item.Genre)</span><br/>
+    <span class="card-text">Author: <b>@Html.DisplayFor(modelItem => item.Author.FullName)</b></span> <br/>
+    <span class="card-text"><b>@Html.DisplayFor(modelItem => item.Price)</b></span>
+    <a asp-action="Details" asp-route-id="@item.Id" class="d-flex justify-content-center btn btn-outline-light my-1">Details</a>
+    @if (User.Identity.IsAuthenticated && User.IsInRole("User"))
+                        {
+                            <a asp-controller="Users" asp-action="OrderABook" asp-route-id="@item.Id" class="d-flex justify-content-center btn btn-outline-light">Buy</a>
+                        }
+  </div>
+</div>
+</div>
+}
+</div>
+</div>
